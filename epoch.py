@@ -30,7 +30,7 @@ def convert(timestamp, converter):
     if divisor > 0:
         seconds, subseconds = divmod(timestamp, divisor)
         subseconds_str = '{:.9f}'.format(subseconds / float(divisor))
-        return converter(seconds).isoformat() + subseconds_str[1:].rstrip('0').rstrip('.')
+        return converter(seconds).isoformat(' ') + subseconds_str[1:].rstrip('0').rstrip('.')
 
 
 def add_epoch_to_time_conversion(workflow, timestamp, descriptor, converter):
@@ -120,6 +120,11 @@ def main(_workflow_):
     add_current(_workflow_, 'ms', 1e3)
     add_current(_workflow_, u'µs', 1e6)
     add_current(_workflow_, 'ns', 1e9)
+    timestamp = int(timeutil.time())
+    add_epoch_to_time_conversion(_workflow_, timestamp, 'Local'.format(**locals()),
+                                     datetime.datetime.fromtimestamp)
+    add_epoch_to_time_conversion(_workflow_, timestamp, 'UTC'.format(**locals()),
+                                     datetime.datetime.utcfromtimestamp)
 
     _workflow_.send_feedback()
 
